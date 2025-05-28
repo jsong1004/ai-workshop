@@ -30,7 +30,7 @@ steps:
   - '--max-instances'
   - '10'
   - '--set-env-vars'
-  - 'NODE_ENV=production,PORT=8080,VITE_API_URL=https://ai-workshop-landing-myresume-457817.a.run.app'
+  - 'NODE_ENV=production,VITE_API_URL=https://ai-workshop-landing-myresume-457817.a.run.app'
   - '--set-secrets'
   - 'GMAIL_USER=GMAIL_USER:latest,GMAIL_APP_PASSWORD=GMAIL_APP_PASSWORD:latest'
 

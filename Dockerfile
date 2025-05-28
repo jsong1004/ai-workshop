@@ -23,8 +23,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install production dependencies only
-RUN npm install --production
+# Install ALL dependencies (including devDependencies) for tsx
+RUN npm install
 
 # Copy built frontend from builder stage
 COPY --from=frontend-builder /app/dist ./dist
@@ -38,11 +38,10 @@ RUN chown -R appuser:appgroup /app
 USER appuser
 
 # Expose the port the app runs on
-EXPOSE 3001
+EXPOSE ${PORT:-8080}
 
 # Set environment variables
 ENV NODE_ENV=production
-ENV PORT=3001
 
-# Start the server
-CMD ["node", "--loader", "tsx", "server/index.ts"] 
+# Start the server with tsx
+CMD ["npx", "tsx", "server/index.ts"] 
