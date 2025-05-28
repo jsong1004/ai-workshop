@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { CalendarIcon } from './icons/CalendarIcon';
 import { LocationIcon } from './icons/LocationIcon';
@@ -26,8 +25,11 @@ export const HeroSection: React.FC = () => {
             <span>Washington Education Institute</span>
           </div>
         </div>
-        <p className="text-slate-400 text-md mb-12">
+        <p className="text-slate-400 text-md mb-4">
           15405 SE 37th St, Bellevue, WA 98006
+        </p>
+        <p className="text-lg font-semibold text-emerald-300 mb-12 animate-bounce">
+          Free event – register now to reserve your seat!
         </p>
         {/* The "Register Now" button that was previously here has been removed.
             The registration section can be accessed by scrolling down or through a navigation link if one existed.

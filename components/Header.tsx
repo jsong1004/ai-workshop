@@ -27,7 +27,7 @@ export default function Header() {
           style={{ display: "flex", alignItems: "center", textDecoration: "none" }}
         >
           <img
-            src="src/assets/startup-consulting-logo.jpg"
+            src="/images/startup-consulting-logo.jpg"
             alt="StreamlineAI Logo"
             style={{
               height: 40,
