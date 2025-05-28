@@ -1,5 +1,5 @@
-
 import React, { useState, useCallback } from 'react';
+import Header from './components/Header';
 import { HeroSection } from './components/HeroSection';
 import { ContentSection } from './components/ContentSection';
 import { RequirementsSection } from './components/RequirementsSection';
@@ -33,6 +33,7 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-900 to-slate-800 text-gray-100">
+      <Header />
       <main className="flex-grow">
         <HeroSection />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
