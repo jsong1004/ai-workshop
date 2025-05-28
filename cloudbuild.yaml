@@ -1,0 +1,41 @@
+steps:
+# Build the container image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/myresume-457817/ai-workshop-landing', '.']
+
+# Push the container image to Container Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/myresume-457817/ai-workshop-landing']
+
+# Deploy container image to Cloud Run
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args:
+  - 'run'
+  - 'deploy'
+  - 'ai-workshop-landing'
+  - '--image'
+  - 'gcr.io/myresume-457817/ai-workshop-landing'
+  - '--region'
+  - 'us-central1'
+  - '--platform'
+  - 'managed'
+  - '--allow-unauthenticated'
+  - '--memory'
+  - '512Mi'
+  - '--cpu'
+  - '1'
+  - '--min-instances'
+  - '0'
+  - '--max-instances'
+  - '10'
+  - '--set-env-vars'
+  - 'NODE_ENV=production,PORT=8080,VITE_API_URL=https://ai-workshop-landing-myresume-457817.a.run.app'
+  - '--set-secrets'
+  - 'GMAIL_USER=GMAIL_USER:latest,GMAIL_APP_PASSWORD=GMAIL_APP_PASSWORD:latest'
+
+images:
+- 'gcr.io/myresume-457817/ai-workshop-landing'
+
+options:
+  logging: CLOUD_LOGGING_ONLY 

@@ -9,12 +9,14 @@ A modern landing page for AI workshop registration with email notifications.
 - Gmail SMTP integration for reliable email delivery
 - TypeScript support for both client and server
 - Environment-based configuration
+- Docker support for easy deployment
 
 ## Prerequisites
 
 - Node.js (v18 or higher)
 - npm or yarn
 - Gmail account (for email notifications)
+- Docker (optional, for containerized deployment)
 
 ## Setup
 
@@ -70,6 +72,43 @@ npm run server
 npm run build
 ```
 
+## Docker Deployment
+
+1. Build the Docker image:
+```bash
+docker build -t ai-workshop-landing .
+```
+
+2. Run the container:
+```bash
+docker run -p 3001:3001 \
+  -e GMAIL_USER=your.email@gmail.com \
+  -e GMAIL_APP_PASSWORD=your-16-character-app-password \
+  -e PORT=3001 \
+  -e VITE_API_URL=http://localhost:3001 \
+  ai-workshop-landing
+```
+
+Or using Docker Compose (create a `docker-compose.yml` file):
+```yaml
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "3001:3001"
+    environment:
+      - GMAIL_USER=your.email@gmail.com
+      - GMAIL_APP_PASSWORD=your-16-character-app-password
+      - PORT=3001
+      - VITE_API_URL=http://localhost:3001
+```
+
+Then run:
+```bash
+docker-compose up
+```
+
 ## Project Structure
 
 ```
@@ -82,6 +121,8 @@ ai-workshop-landing-page/
 ├── public/                # Static assets
 ├── .env.local            # Environment variables (create this)
 ├── package.json          # Project dependencies and scripts
+├── Dockerfile            # Docker configuration
+├── .dockerignore         # Docker ignore file
 └── README.md            # Project documentation
 ```
 
@@ -93,6 +134,7 @@ ai-workshop-landing-page/
 - Express
 - Nodemailer
 - Gmail SMTP
+- Docker
 
 ## License
 
