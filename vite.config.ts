@@ -4,7 +4,7 @@ import { defineConfig, loadEnv } from 'vite';
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
     const apiUrl = mode === 'production' 
-      ? 'https://ai-workshop-landing-page-4g4g6z3j3a-uc.a.run.app'
+      ? 'https://ai-workshop-landing-myresume-457817.a.run.app'
       : env.VITE_API_URL || 'http://localhost:3001';
     
     return {

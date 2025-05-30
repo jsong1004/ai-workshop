@@ -1,5 +1,4 @@
 import express from 'express';
-import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import emailRouter from './api/email.js';
@@ -16,32 +15,26 @@ console.log('Starting server with configuration:', {
   distPath: path.join(__dirname, '../dist')
 });
 
-// Middleware
-app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://workshop.ai-biz.app', 'https://ai-workshop-landing-page-4g4g6z3j3a-uc.a.run.app', 'http://localhost:3000']
-    : 'http://localhost:3000',
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
-  exposedHeaders: ['Content-Length', 'Content-Type'],
-  credentials: true,
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-  maxAge: 86400 // 24 hours
-}));
+// Robust manual CORS middleware
+const allowedOrigins = [
+  'https://workshop.ai-biz.app',
+  'https://ai-workshop-landing-myresume-457817.a.run.app',
+  'http://localhost:3000'
+];
 
-// Handle OPTIONS requests explicitly
-app.options('*', cors());
-
-// Add headers middleware
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', process.env.NODE_ENV === 'production' 
-    ? 'https://workshop.ai-biz.app'
-    : 'http://localhost:3000');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Origin, Accept');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  next();
+  const origin = req.headers.origin;
+  if (typeof origin === 'string' && allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization,Origin,Accept');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  }
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(204);
+  } else {
+    next();
+  }
 });
 
 app.use(express.json());
