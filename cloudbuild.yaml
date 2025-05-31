@@ -1,11 +1,11 @@
 steps:
 # Build the container image
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/myresume-457817/ai-workshop-landing', '.']
+  args: ['build', '-t', 'gcr.io/myresume-457817/ai-workshop', '.']
 
 # Push the container image to Container Registry
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/myresume-457817/ai-workshop-landing']
+  args: ['push', 'gcr.io/myresume-457817/ai-workshop']
 
 # Deploy container image to Cloud Run
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -13,9 +13,9 @@ steps:
   args:
   - 'run'
   - 'deploy'
-  - 'ai-workshop-landing'
+  - 'ai-workshop'
   - '--image'
-  - 'gcr.io/myresume-457817/ai-workshop-landing'
+  - 'gcr.io/myresume-457817/ai-workshop'
   - '--region'
   - 'us-central1'
   - '--platform'
@@ -29,13 +29,15 @@ steps:
   - '0'
   - '--max-instances'
   - '10'
+  - '--port'
+  - '8080'
   - '--set-env-vars'
-  - 'NODE_ENV=production,VITE_API_URL=https://ai-workshop-landing-myresume-457817.a.run.app'
-  - '--set-secrets'
-  - 'GMAIL_USER=GMAIL_USER:latest,GMAIL_APP_PASSWORD=GMAIL_APP_PASSWORD:latest'
+  - 'NODE_ENV=production,VITE_API_URL=https://ai-workshop-711582759542.us-central1.run.app'
+  - '--update-secrets'
+  - 'SENDGRID_API_KEY=SENDGRID_API_KEY:latest,GMAIL_USER=ADMIN_EMAIL:latest'
 
 images:
-- 'gcr.io/myresume-457817/ai-workshop-landing'
+- 'gcr.io/myresume-457817/ai-workshop'
 
 options:
   logging: CLOUD_LOGGING_ONLY 

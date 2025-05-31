@@ -1,8 +1,8 @@
-import nodemailer from 'nodemailer';
 import { RegistrationData } from '../types.js';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import sgMail from '@sendgrid/mail';
 
 // Get the directory name in ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -11,33 +11,15 @@ const __dirname = path.dirname(__filename);
 // Load environment variables from .env.local in the root directory
 dotenv.config({ path: path.resolve(__dirname, '../.env.local') });
 
-// Validate required environment variables
-const requiredEnvVars = ['GMAIL_USER', 'GMAIL_APP_PASSWORD'] as const;
-const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
+const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
+const ADMIN_EMAIL = process.env.GMAIL_USER; // Use the same admin email as before
 
-if (missingEnvVars.length > 0) {
-  console.error('Missing required environment variables:', missingEnvVars.join(', '));
-  console.error('Please create a .env.local file in the root directory with these variables.');
+if (!SENDGRID_API_KEY || !ADMIN_EMAIL) {
+  console.error('Missing required environment variables: SENDGRID_API_KEY or GMAIL_USER');
   process.exit(1);
 }
 
-// Create reusable transporter object using Gmail SMTP
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD, // Use App Password, not your regular Gmail password
-  },
-});
-
-// Verify SMTP connection configuration
-transporter.verify(function(error, success) {
-  if (error) {
-    console.error('SMTP Connection Error:', error);
-  } else {
-    console.log('SMTP Server is ready to take our messages');
-  }
-});
+sgMail.setApiKey(SENDGRID_API_KEY);
 
 const createAdminEmailBody = (data: RegistrationData) => `
   <html>
@@ -112,32 +94,32 @@ const createConfirmationEmailBody = (data: RegistrationData) => `
 `;
 
 export const sendRegistrationEmail = async (data: RegistrationData): Promise<void> => {
-  console.log("Attempting to send registration emails...");
+  console.log("Attempting to send registration emails via SendGrid...");
   console.log("Registration Details:", data);
 
   try {
     // Send email to admin
     console.log('Sending admin notification email...');
-    const adminInfo = await transporter.sendMail({
-      from: process.env.GMAIL_USER,
-      to: process.env.GMAIL_USER,
+    await sgMail.send({
+      to: ADMIN_EMAIL,
+      from: ADMIN_EMAIL,
       subject: `New AI Workshop Registration: ${data.name}`,
       html: createAdminEmailBody(data),
     });
-    console.log(`Admin notification email sent successfully: ${adminInfo.messageId}`);
+    console.log(`Admin notification email sent successfully`);
 
     // Send confirmation email to registrant
     console.log('Sending confirmation email to registrant...');
-    const confirmationInfo = await transporter.sendMail({
-      from: process.env.GMAIL_USER,
+    await sgMail.send({
       to: data.email,
+      from: ADMIN_EMAIL,
       subject: 'AI Workshop Registration Confirmation',
       html: createConfirmationEmailBody(data),
-      replyTo: process.env.GMAIL_USER,
+      replyTo: ADMIN_EMAIL,
     });
-    console.log(`Confirmation email sent successfully to ${data.email}: ${confirmationInfo.messageId}`);
+    console.log(`Confirmation email sent successfully to ${data.email}`);
   } catch (error) {
-    console.error("Failed to send registration emails:", error);
+    console.error("Failed to send registration emails via SendGrid:", error);
     if (error instanceof Error) {
       console.error("Error details:", {
         message: error.message,

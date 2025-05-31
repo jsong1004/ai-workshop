@@ -18,8 +18,10 @@ console.log('Starting server with configuration:', {
 // Robust manual CORS middleware
 const allowedOrigins = [
   'https://workshop.ai-biz.app',
+  'https://ai-workshop-711582759542.us-central1.run.app',
   'https://ai-workshop-landing-myresume-457817.a.run.app',
-  'http://localhost:3000'
+  'http://localhost:3000',
+  'http://localhost:8080'
 ];
 
 app.use((req, res, next) => {
@@ -31,10 +33,10 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Credentials', 'true');
   }
   if (req.method === 'OPTIONS') {
-    res.sendStatus(204);
-  } else {
-    next();
+    res.status(204).end();
+    return;
   }
+  next();
 });
 
 app.use(express.json());
@@ -65,6 +67,12 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
   res.status(500).json({ error: 'Internal server error' });
 });
 
+app.get('/debug-env', (req, res) => {
+  res.json({
+    GMAIL_USER: process.env.GMAIL_USER ? 'set' : 'not set',
+    GMAIL_APP_PASSWORD: process.env.GMAIL_APP_PASSWORD ? 'set' : 'not set'
+  });
+});
 // Start server
 const server = app.listen(port, '0.0.0.0', () => {
   console.log(`Server is running on port ${port}`);
