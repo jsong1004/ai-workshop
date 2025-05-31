@@ -5,8 +5,7 @@ A modern landing page for AI workshop registration with email notifications.
 ## Features
 
 - React-based landing page with Vite
-- Server-side email notifications using Nodemailer
-- Gmail SMTP integration for reliable email delivery
+- Server-side email notifications using **SendGrid API**
 - TypeScript support for both client and server
 - Environment-based configuration
 - Docker support for easy deployment
@@ -15,7 +14,7 @@ A modern landing page for AI workshop registration with email notifications.
 
 - Node.js (v18 or higher)
 - npm or yarn
-- Gmail account (for email notifications)
+- **SendGrid account and API key** (for email notifications)
 - Docker (optional, for containerized deployment)
 
 ## Setup
@@ -33,22 +32,21 @@ npm install
 
 3. Create a `.env.local` file in the root directory with the following variables:
 ```env
-GMAIL_USER=your.email@gmail.com
-GMAIL_APP_PASSWORD=your-16-character-app-password
+SENDGRID_API_KEY=your-sendgrid-api-key
+GMAIL_USER=your.verified.sender@email.com
 PORT=3001
 VITE_API_URL=http://localhost:3001
 ```
 
-### Setting up Gmail App Password
+    - `SENDGRID_API_KEY`: Your SendGrid API key (get it from your SendGrid dashboard).
+    - `GMAIL_USER`: The email address you want to send from (must be a verified sender in SendGrid).
+    - `PORT`: The port your backend will run on.
+    - `VITE_API_URL`: The URL your frontend will use to call the backend.
 
-1. Go to your Google Account settings
-2. Navigate to Security
-3. Enable 2-Step Verification if not already enabled
-4. Go to App Passwords
-5. Select "Mail" and "Other (Custom name)"
-6. Name it something like "AI Workshop App"
-7. Copy the 16-character password that Google generates
-8. Use this password as your `GMAIL_APP_PASSWORD` in `.env.local`
+## Email Delivery
+
+- **SendGrid** is used for sending emails. You must have a [SendGrid account](https://sendgrid.com/) and a verified sender email.
+- The backend uses the `@sendgrid/mail` package to send both admin notification and user confirmation emails.
 
 ## Development
 
@@ -82,8 +80,8 @@ docker build -t ai-workshop-landing .
 2. Run the container:
 ```bash
 docker run -p 3001:3001 \
-  -e GMAIL_USER=your.email@gmail.com \
-  -e GMAIL_APP_PASSWORD=your-16-character-app-password \
+  -e SENDGRID_API_KEY=your-sendgrid-api-key \
+  -e GMAIL_USER=your.verified.sender@email.com \
   -e PORT=3001 \
   -e VITE_API_URL=http://localhost:3001 \
   ai-workshop-landing
@@ -98,10 +96,11 @@ services:
     ports:
       - "3001:3001"
     environment:
-      - GMAIL_USER=your.email@gmail.com
-      - GMAIL_APP_PASSWORD=your-16-character-app-password
+      - SENDGRID_API_KEY=your-sendgrid-api-key
+      - GMAIL_USER=your.verified.sender@email.com
       - PORT=3001
       - VITE_API_URL=http://localhost:3001
+    restart: unless-stopped 
 ```
 
 Then run:
@@ -116,7 +115,7 @@ ai-workshop-landing-page/
 ├── src/                    # Frontend source code
 ├── server/                 # Backend server code
 │   ├── index.ts           # Server entry point
-│   ├── emailService.ts    # Email service implementation
+│   ├── emailService.ts    # Email service implementation (uses SendGrid)
 │   └── tsconfig.json      # Server TypeScript configuration
 ├── public/                # Static assets
 ├── .env.local            # Environment variables (create this)
@@ -132,8 +131,7 @@ ai-workshop-landing-page/
 - TypeScript
 - Vite
 - Express
-- Nodemailer
-- Gmail SMTP
+- **SendGrid API**
 - Docker
 
 ## License
